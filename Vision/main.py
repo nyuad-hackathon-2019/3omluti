@@ -4,7 +4,8 @@ import time
 from google.cloud import vision
 from google.cloud.vision import types
 import cv2
-
+import tkinter
+import pyqrcode
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]=os.path.join(os.getcwd(),"credentials.json")
 client=vision.ImageAnnotatorClient()
@@ -29,6 +30,17 @@ def match_label(response):
             return True
     
     return False
+    
+def display_qr():
+    qr=pyqrcode.create(2)
+    qr_xbm=qr.xbm(scale=25)
+    top=tkinter.Tk()
+    bmp=tkinter.BitmapImage(data=qr_xbm)
+    bmp.config(background="white")
+    label = tkinter.Label(image=bmp)
+    label.pack()
+    top.after(10000,lambda:top.destroy())
+    top.mainloop()
     
 def capture_webcam():
     start=time.time()
