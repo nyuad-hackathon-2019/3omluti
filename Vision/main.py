@@ -16,25 +16,47 @@ def get_labels(image):
     response=client.label_detection(image=img)
     return response
 
+def write_to_file(response,time):
+    with open("log.txt","a") as f:
+        f.write(time)
+        f.write('\n-----------\n')
+        f.write(str(response)+'\n')
 
-start=time.time()
-cap=cv2.VideoCapture(0)
-while (True):
-    ret, frame = cap.read()
-    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
-
-    cv2.imshow('frame', rgb) 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+def match_label(response):
+    descriptions=["Bottle","Plastic bottle","Bottled water","Water bottle","Mineral water"]
+    for label in response.label_annotations:
+        if label.description in descriptions:
+            return True
     
-    if (time.time()-start) > 5:
-        fname=str(time.time())+".jpg"
-        out = cv2.imwrite(fname, frame)
-        print(get_labels(os.path.join(os.getcwd(),fname)))
-        start=time.time()
-        
-cap.release()
-cv2.destroyAllWindows()
-for file in os.listdir(os.getcwd()):
-    if file.endswith(".jpg"):
-        os.remove(file)
+    return False
+    
+def capture_webcam():
+    start=time.time()
+    cap=cv2.VideoCapture(0)
+    while (True):
+        ret, frame = cap.read()
+        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
+
+        cv2.imshow('frame', rgb) 
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+        if time.time()-start > 0.1:
+            fname=str(time.time())+".jpg"
+            out = cv2.imwrite(fname, frame)
+            response=get_labels(os.path.join(os.getcwd(),fname))
+            write_to_file(response,fname)
+            if match_label(response):
+                display_qr()
+                break
+            start=time.time()
+
+    cap.release()
+    cv2.destroyAllWindows()
+    
+    '''
+    for file in os.listdir(os.getcwd()):
+        if file.endswith(".jpg"):
+            os.remove(file)
+    '''     
+if __name__ == "__main__":
+    capture_webcam()
