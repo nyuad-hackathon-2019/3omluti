@@ -24,16 +24,16 @@ def write_to_file(response,time):
         f.write(str(response)+'\n')
 
 def match_label(response):
-    descriptions=["Bottle","Plastic bottle","Bottled water","Water bottle","Mineral water"]
+    descriptions=["Bottle","Plastic bottle","Bottled water","Water bottle","Mineral water","Plastic"]
     papers=["Paper","Origami","Paper product","Text"]
     for label in response.label_annotations:
         if label.description in descriptions:
-            return "Plastic"
+            return ("Plastic",label.description)
         elif label.description in papers:
-            return "Paper"
+            return ("Paper",label.description)
     return False
     
-def display_qr(product_type):
+def display_qr(product_type,product_name):
     scoring_dict={'Plastic':1,"Paper":2}
     qr=pyqrcode.create(scoring_dict[product_type])
     qr_xbm=qr.xbm(scale=25)
@@ -42,9 +42,9 @@ def display_qr(product_type):
     bmp.config(background="white")
     label = tkinter.Label(image=bmp)
     label.pack()
-    text=tkinter.Label(text=product_type,font=("Helvetica", 30))
+    text=tkinter.Label(text=product_name,font=("Helvetica", 30))
     text.pack()
-    top.after(10000,lambda:top.destroy())
+    top.after(30000,lambda:top.destroy())
     top.mainloop()
     
 def capture_webcam(capture_time):
@@ -63,7 +63,8 @@ def capture_webcam(capture_time):
             response=get_labels(os.path.join(os.getcwd(),fname))
             write_to_file(response,fname)
             if match_label(response):
-                display_qr(match_label(response))
+                label_type,label=match_label(response)
+                display_qr(label_type,label)
                 break
             start=time.time()
 
