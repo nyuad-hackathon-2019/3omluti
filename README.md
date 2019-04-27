@@ -6,8 +6,7 @@ Reward system for people responsibly throwing trash saving the environment.
 
 
 Link to presentation:
-https://docs.google.com/presentation/d/1nHRBdpC6jngmvmnlMzVvOQ0WogXvjJAlPWXaDaI­HKw/edit?usp=sharing
-
+https://docs.google.com/presentation/d/1nk-HMKiNrgs5HPXPhk0ygmn5gBnnJSr8ZM3zBr2Ka_Q/edit?usp=sharing
 
 link to facebook live video:
 ..
