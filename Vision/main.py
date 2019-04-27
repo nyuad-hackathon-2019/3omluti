@@ -25,24 +25,29 @@ def write_to_file(response,time):
 
 def match_label(response):
     descriptions=["Bottle","Plastic bottle","Bottled water","Water bottle","Mineral water"]
+    papers=["Paper","Origami","Paper product","Text"]
     for label in response.label_annotations:
         if label.description in descriptions:
-            return True
-    
+            return "Plastic"
+        elif label.description in papers:
+            return "Paper"
     return False
     
-def display_qr():
-    qr=pyqrcode.create(2)
+def display_qr(product_type):
+    scoring_dict={'Plastic':1,"Paper":2}
+    qr=pyqrcode.create(scoring_dict[product_type])
     qr_xbm=qr.xbm(scale=25)
     top=tkinter.Tk()
     bmp=tkinter.BitmapImage(data=qr_xbm)
     bmp.config(background="white")
     label = tkinter.Label(image=bmp)
     label.pack()
+    text=tkinter.Label(text=product_type,font=("Helvetica", 30))
+    text.pack()
     top.after(10000,lambda:top.destroy())
     top.mainloop()
     
-def capture_webcam():
+def capture_webcam(capture_time):
     start=time.time()
     cap=cv2.VideoCapture(0)
     while (True):
@@ -52,13 +57,13 @@ def capture_webcam():
         cv2.imshow('frame', rgb) 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-        if time.time()-start > 0.1:
+        if time.time()-start > capture_time:
             fname=str(time.time())+".jpg"
             out = cv2.imwrite(fname, frame)
             response=get_labels(os.path.join(os.getcwd(),fname))
             write_to_file(response,fname)
             if match_label(response):
-                display_qr()
+                display_qr(match_label(response))
                 break
             start=time.time()
 
@@ -70,5 +75,6 @@ def capture_webcam():
         if file.endswith(".jpg"):
             os.remove(file)
     '''     
+    
 if __name__ == "__main__":
-    capture_webcam()
+    capture_webcam(0.1)
