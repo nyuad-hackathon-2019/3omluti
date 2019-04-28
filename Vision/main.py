@@ -36,15 +36,16 @@ def match_label(response):
 def display_qr(product_type,product_name):
     scoring_dict={'Plastic':1,"Paper":2}
     qr=pyqrcode.create(scoring_dict[product_type])
-    qr_xbm=qr.xbm(scale=25)
+    qr_xbm=qr.xbm(scale=30)
     top=tkinter.Tk()
+    top.attributes('-fullscreen',True)
     bmp=tkinter.BitmapImage(data=qr_xbm)
     bmp.config(background="white")
     label = tkinter.Label(image=bmp)
     label.pack()
-    text=tkinter.Label(text=product_name,font=("Helvetica", 30))
+    text=tkinter.Label(text=product_type,font=("Helvetica", 30))
     text.pack()
-    top.after(30000,lambda:top.destroy())
+    top.after(10000,lambda:top.destroy())
     top.mainloop()
     
 def capture_webcam(capture_time):
